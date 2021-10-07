@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <ctype.h>
 #define BUF_SIZE 1024
 
@@ -48,17 +49,38 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
 }
 
 int main(int argc, char *argv[]) {
-    // This sets these to `stdin` and `stdout` by default.
-    // You then need to set them to user specified files when the user
-    // provides files names as command line arguments.
-    FILE *inputFile = stdin;
-    FILE *outputFile = stdout;
+	// This sets these to `stdin` and `stdout` by default.
+	// You then need to set them to user specified files when the user
+	// provides files names as command line arguments.
+	FILE *inputFile = stdin;
+	FILE *outputFile = stdout;
+	if(argc == 2) {
+		inputFile = fopen(argv[1], "r");
+	} else if(argc == 3){
+		inputFile = fopen(argv[1], "r");
+		outputFile = fopen(argv[2], "w");
+	} else if(argc > 3) {
+		fprintf(stderr, "Usage: %s [input_file] [output_file]\n", argv[0]);
+		exit(1);
+	}
 
-    // Code that processes the command line arguments
-    // and sets up inputFile and outputFile.
+	if(inputFile == NULL) {
+		fprintf(stderr, "Can't open input file for reading\n");
+		exit(1);
+	}
+	if(outputFile == NULL) {
+		fprintf(stderr, "Can't open output file for writing\n");
+		exit(1);
+	}
 
-    disemvowel(inputFile, outputFile);
+    	disemvowel(inputFile, outputFile);
 
-    return 0;
+	if(inputFile != stdin) {
+		fclose(inputFile);
+	}
+	if(outputFile != stdout) {
+		fclose(outputFile);
+	}
+	return 0;
 }
 
